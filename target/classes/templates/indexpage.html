@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+<link rel="stylesheet" type="text/css" media="all" href="/homestyle.css"
+	th:href="@{/homestyle.css}" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blog Application</title>
+</head>
+<body>
+	<div class="wrap">
+		<img src="./pic.jpg" alt="Header Image">
+		<div class="nav">
+
+
+		</div>
+		<div class="header">
+			<div class="options">
+				<div class="dropdown">
+					<button class="dropandwritebtn">Dropdown</button>
+					<div class="dropdown-content">
+						<a href="#" th:href="@{/posts/}">Home</a> <a
+							sec:authorize="isAuthenticated()" href="#"
+							th:href="@{/user/{uid}/drafts(uid = ${#request.userPrincipal.principal.id})}">See
+							drafts</a> <a th:href="@{/posts/olderposts}">See older posts</a> <a
+							th:href="@{/posts/recentposts}">See most recent posts</a>
+
+							<div class="login-singup-btn">
+								<div class="loginbtn" sec:authorize="!isAuthenticated()">
+									<form th:action="@{/login}">
+										<input class="dropandwritebtn" type="submit" value="Log in / Sign up" />
+									</form>
+								</div>
+								<div class="logoutbtn" sec:authorize="isAuthenticated()">
+									<form th:action="@{/logout}" method="post">
+										<input class="dropandwritebtn" type="submit" value="Logout" />
+									</form>
+								</div>
+							</div>
+					</div>
+				</div>
+			</div><br><br>
+			
+			<div class="author-filter">
+				<div class="dropdown">
+					<button class="dropandwritebtn">Search/Filter</button>
+					<div class="dropdown-content">
+						<form action="/posts/searchedposts">
+							<input name="searchArg" type="text" placeholder="search here">
+							<button class="search-filter-btn" type="submit">Search</button>
+							<h4>Tags</h4>
+							<div th:each="tag : ${tagsList}">
+								<input th:value="${tag}" type="checkbox" name="tagName">
+								<label th:text="${tag}"></label>
+							</div>
+							<h4>Authors</h4>
+							<div th:each="author : ${authorList}">
+								<input th:value="${author}" type="checkbox" name="authorName">
+								<label th:text="${author}"></label>
+							</div>
+							<button class="search-filter-btn" type="submit">Apply</button>
+						</form>
+					</div>
+				</div>
+			</div>
+			<br> <br>
+
+			<div>
+				<button class="dropandwritebtn">
+					<a href="/newpost">Write post</a>
+				</button>
+			</div>
+		</div>
+<!-- post Content -->
+		<div class="content">
+			<table>
+				<tr th:each="post : ${postList}">
+					<td th:if="${post.isPublished()}">
+						<div class="posts">
+							<div class="post">
+								<div class="section">
+									<h1 th:text="${post.getTitle()}"></h1>
+									<p th:text="${post.getExcerpt()}"></p>
+									<p th:text=" 'Author : ' + ${post.getAuthor()}"></p>
+									<p th:text="'Published At : ' + ${post.getPublishedAt()}"></p>
+									<div class="tags">
+										<p>Tags :</p>
+										<p id="tag" th:each="tag :${post.getTags()}"
+											th:text="${tag.getName()}"></p>
+									</div>
+									<a href="#" th:href="@{/posts/{id}(id=${post.getId()})}"
+										class="readmore">read more</a>
+								</div>
+							</div>
+						</div>
+					</td>
+				</tr>
+			</table>
+		</div>
+<!-- Pagination Div -->
+		<div class="pagination">
+			<div th:if="${pageNumber gt 1}">
+				<form action="/posts/">
+					<input name="pageNumber" type="hidden" th:value="${pageNumber - 1}">
+					<input name="limit" type="hidden" th:value="${limit}">
+					<button class="next-prev-btn" type="submit">Previous</button>
+				</form>
+			</div>
+			<div th:if="${pageNumber eq 1}">
+				<form action="/posts/">
+					<button class="next-prev-btn" type="submit">Previous</button>
+				</form>
+			</div>
+			<div th:if="${totalPages gt pageNumber + 1}">
+				<form action="/posts/">
+					<input name="pageNumber" type="hidden" th:value="${pageNumber + 1}">
+					<input name="limit" type="hidden" th:value="${limit}">
+					<button type="submit" class="next-prev-btn">Next</button>
+				</form>
+			</div>
+		</div>
+
+	</div>
+abhiprd219
+</body>
+</html>

@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Comment</title>
+</head>
+<body>
+<form style="text-align: center;" action="#" th:action="@{/posts/{id}/{commentid}/updatecomment/savecomment(id=${postId},commentid=${comment.getId()})}" method="post">
+    <h1 style="margin-top: 4%;">update your comment</h1>
+    <input style="width: 60%; height: 3em;" th:value="${comment.getName()}" type="text" name="name" placeholder="Enter Your Name" required="required"><br> 
+    <input style="width: 60%; height: 3em; margin: 2px" th:value="${comment.getEmail()}" type="email" name="email" placeholder="Enter email : example@gmail.com" required="required"><br>
+    <textarea style="width: 60%; height: 8vw;" th:text="${comment.getComment()}" name="comment" rows="15" cols="28" placeholder="write your comment here" required="required"></textarea>
+    <button style="font-size: 30px; width: 60%; background-color: blue; padding: 0.5em;" type="submit">submit</button>
+</form>
+</body>
+</html>

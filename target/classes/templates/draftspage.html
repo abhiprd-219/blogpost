@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+<link rel="stylesheet" type="text/css" media="all" href="/homestyle.css"
+	th:href="@{/homestyle.css}" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Drafts</title>
+</head>
+
+<body>
+	<div class="content">
+		<table>
+			<tr th:each="post : ${postList}">
+				<td th:if="${not post.isPublished()}">
+
+					<div class="posts">
+						<div class="post">
+							<div class="section">
+								<h1 th:text="${post.getTitle()}"></h1>
+								<p
+									th:utext="${#strings.replace(post.getContent(),'&#10;','<br>')}"></p>
+								<p th:text="${post.getAuthor()}"></p>
+								<p th:text=" 'Created At :  '+${post.getCreatedAt()}"></p>
+								<p th:text=" 'Updated : ' +${post.getUpdatedAt()}"></p>
+								<div class="tags">
+									<p>Tags :</p>
+									<p id="tags" th:each="tag :${post.getTags()}"
+										th:text="${tag.getName()}"></p>
+									<br>
+								</div>
+								<div>
+									<form action="#"
+										th:action="@{/posts/{id}/update(id=${post.getId()})}"
+										method="post">
+										<input type="hidden" name="title"
+											th:value="${post.getTitle()}"> <input type="hidden"
+											name="content" th:value="${post.getContent()}"> <input
+											type="hidden" name="author" th:value="${post.getAuthor()}">
+										<input type="hidden" name="previoustags"
+											th:value="${post.getTagsInString()}">
+										<button type="submit">update</button>
+									</form>
+								</div>
+							</div>
+						</div>
+					</div>
+				</td>
+			</tr>
+		</table>
+	</div>
+abhiprd219
+</body>
+
+</html>
