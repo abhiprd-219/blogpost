@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+<link rel="stylesheet" type="text/css" media="all" href="/homestyle.css"
+	th:href="@{/homestyle.css}" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blog Application</title>
+</head>
+<body>
+	<div class="wrap">
+		<div class="nav">
+			#<i class="fa-solid fa-pen-field"></i>
+		</div>
+
+
+		<div class="header">
+			<div class="options">
+				<div class="dropdown">
+					<button class="dropandwritebtn">Dropdown</button>
+					<div class="dropdown-content">
+						<a href="#" th:href="@{/posts/}">Home</a> <a
+							sec:authorize="isAuthenticated()" href="#"
+							th:href="@{/user/{uid}/drafts(uid = ${#request.userPrincipal.principal.id})}">See
+							drafts</a> <a th:href="@{/posts/olderposts}">see older posts</a> <a
+							th:href="@{/posts/recentposts}">see most recent posts</a>
+					</div>
+				</div>
+			</div>
+
+			<div class="author-filter">
+				<div class="dropdown">
+					<button class="dropandwritebtn">Filter</button>
+					<div class="dropdown-content">
+						<form action="/posts/searchedposts">
+							<input name="searchArg" type="text" th:value="${searchArg}">
+							<button class="search-filter-btn" type="submit">Search</button>
+							<h4>Tags</h4>
+							<div th:each="tag : ${tagsList}">
+								<input th:value="${tag}" type="checkbox" name="tagName">
+								<label th:text="${tag}"></label>
+							</div>
+							<h4>Authors</h4>
+							<div th:each="author : ${authorList}">
+								<input th:value="${author}" type="checkbox" name="authorName">
+								<label th:text="${author}"></label>
+							</div>
+							<button class="search-filter-btn" type="submit">Apply</button>
+						</form>
+					</div>
+				</div>
+			</div>
+
+			<div>
+				<button class="dropandwritebtn">
+					<a href="/newpost">Write post</a>
+				</button>
+			</div>
+
+		</div>
+		<h4 th:text="${args}"></h4>
+		<div class="content">
+			<table>
+				<tr th:each="post : ${postList}">
+					<td th:if="${post.isPublished()}">
+						<div class="posts">
+							<div class="post">
+								<div class="section">
+									<h1 th:text="${post.getTitle()}"></h1>
+									<p th:text="${post.getExcerpt()}"></p>
+									<p th:text=" 'Author : ' + ${post.getAuthor()}"></p>
+									<p th:text="'Published At : ' + ${post.getPublishedAt()}"></p>
+									<div class="tags">
+										<p>Tags :</p>
+										<p id="tags" th:each="tag :${post.getTags()}"
+											th:text="${tag.getName()}"></p>
+										<br>
+									</div>
+									<a th:href="@{/posts/{id}(id=${post.getId()})}">read more</a>
+								</div>
+							</div>
+						</div>
+					</td>
+				</tr>
+			</table>
+
+			<div class="pagination">
+				<div th:if="${totalPages gt pageNumber + 1}">
+					<form action="/posts/searchedposts/">
+						<input name="pageNumber" type="hidden"
+							th:value="${pageNumber + 1}"> <input name="searchArg"
+							type="hidden" th:value="${searchArg}"> <input
+							name="tagName" type="hidden" th:value="${tagName}"> <input
+							name="authorName" type="hidden" th:value="${authorName}">
+						<input name="limit" type="hidden" th:value="${limit}">
+						<button type="submit" class="next-prev-btn">Next</button>
+					</form>
+				</div>
+				<div th:if="${pageNumber gt 1}">
+					<form action="/posts/searchedposts/">
+						<input name="pageNumber" type="hidden"
+							th:value="${pageNumber - 1}"> <input name="searchArg"
+							type="hidden" th:value="${searchArg}"> <input
+							name="tagName" type="hidden" th:value="${tagName}"> <input
+							name="authorName" type="hidden" th:value="${authorName}">
+						<input name="limit" type="hidden" th:value="${limit}">
+						<button type="submit" class="next-prev-btn">Previous</button>
+					</form>
+				</div>
+				<div th:if="${pageNumber eq 1}">
+					<form action="/posts/searchedposts">
+						<input name="searchArg" type="hidden" th:value="${searchArg}">
+						<input name="tagName" type="hidden" th:value="${tagName}">
+						<input name="authorName" type="hidden" th:value="${authorName}">
+						<button type="submit" class="next-prev-btn">Previous</button>
+					</form>
+				</div>
+			</div>
+
+		</div>
+
+	</div>
+</body>
+</html>

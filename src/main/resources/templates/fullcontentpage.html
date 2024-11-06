@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+<link rel="stylesheet" type="text/css" media="all" href="styles.css"
+	th:href="@{/homestyle.css}" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Read Full Article</title>
+</head>
+
+<body>
+	<div class="wrap">
+		<div class="nav">
+
+		</div>
+			<table style="max-width: 68em; margin: auto; margin-top: 60px;">
+				<tr>
+					<td>
+						<div class="posts">
+							<div class="post">
+								<div class="section">
+
+									<h1 th:text="${post.getTitle()}"></h1>
+									<p
+										th:text="${#strings.replace(post.getContent(),'&#10;','<br>')}"></p>
+									<br>
+									<!-- <p th:text="${post.getAuthor()}"></p> -->
+									<p>Author : [[${post.getAuthor()}]]</p>
+									<br>
+									<p>Published at : [[${post.getPublishedAt()}]]</p>
+									<p>Updated at : [[${post.getUpdatedAt()}]]</p>
+									<br>
+									<div class="tags">
+										<p>Tags :</p>
+										<p id="tags" th:each="tag :${post.getTags()}"
+											th:text="${tag.getName()}"></p>
+										<br>
+									</div>
+
+
+									<div sec:authorize="isAuthenticated()">
+										<div
+											th:if="${(#request.userPrincipal.principal.id == post.getUser().getId()) or (#request.userPrincipal.principal.role ==  'ADMIN' )}">
+											<div class="buttons">
+												<form action="#"
+													th:action="@{/posts/{id}/update(id=${post.getId()})}"
+													method="post">
+													<input type="hidden" name="title"
+														th:value="${post.getTitle()}"> <input
+														type="hidden" name="content"
+														th:value="${post.getContent()}"> <input
+														type="hidden" name="author" th:value="${post.getAuthor()}">
+													<input type="hidden" name="previoustags"
+														th:value="${post.getTagsInString()}">
+													<button type="submit">update</button>
+												</form>
+												<form action="#"
+													th:action="@{/posts/delete/{id}(id=${post.getId()})}"
+													method="post">
+													<button type="submit">delete</button>
+												</form>
+											</div>
+										</div>
+									</div>
+									<!-- <a
+				th:href="@{/posts/{id}/{details}/addcomment(id=${post.getId()},details=${post.getTitle()})}">Add
+					Comment</a> -->
+
+								</div>
+							</div>
+						</div>
+					</td>
+
+				</tr>
+			</table>
+		</div>
+
+		<div class="comments">
+			<div class="posts">
+				<div class="post">
+					<div class="section">
+						<h2>Comments</h2>
+						<div class="comments">
+							<table>
+								<tr th:each="comment : ${post.getComments()}">
+									<td>
+										<h4 th:text="${comment.getName()}">nur</h4>
+										<p th:text="${comment.getComment()}">comment</p>
+										<div sec:authorize="isAuthenticated()">
+											<div
+												th:if="${(#request.userPrincipal.principal.id == post.getUser().getId()) or (#request.userPrincipal.principal.role ==  'ADMIN' )}">
+												<div class="buttons">
+													<form action="#"
+														th:action="@{/posts/{id}/{commentid}/updatecomment(id = ${post.getId()},commentid= ${comment.getId()})}">
+														<button type="submit">update</button>
+													</form>
+													<form action="#"
+														th:action="@{/posts/{id}/{commentid}/deletecomment(id = ${post.getId()},commentid= ${comment.getId()})}"
+														method="post">
+														<button type="submit">delete</button>
+													</form>
+												</div>
+											</div>
+										</div>
+									</td>
+								</tr>
+							</table>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+
+		<div class="comment-form">
+			<form style="text-align: center;" action="#"
+				th:action="@{/posts/{id}/addcomment/savecomment(id=${post.getId()})}"
+				method="post">
+				<h5>Write your comment</h5>
+				<div sec:authorize="!isAuthenticated()">
+					<input type="text" name="name" placeholder="Enter Your Name"
+						required="required"><br> <input type="email"
+						name="email" placeholder="Enter email : example@gmail.com"
+						required="required"><br>
+				</div>
+				<div sec:authorize="isAuthenticated()">
+					<input type="hidden" name="name"
+						th:value="${#request.userPrincipal.principal.name}"><br>
+					<input type="hidden" name="email"
+						th:value="${#request.userPrincipal.principal.email}"><br>
+				</div>
+				<textarea name="comment" placeholder="write your comment here"
+					required="required"></textarea>
+				<br>
+				<button type="submit">submit</button>
+			</form>
+
+	</div>
+abhiprd219
+</body>
+</html>

@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+<meta charset="UTF-8">
+<title>New Post</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link
+	href="https://fonts.googleapis.com/css2?family=Poppins:wght@500&display=swap"
+	rel="stylesheet">
+</head>
+
+<body>
+	<h1 th:inline="text">Hello
+		[[${#request.userPrincipal.principal.name}]]</h1>
+	<form action="#" th:action="@{/newpost/savenewpost}"
+		style="text-align: center;" method="post">
+		<h1>Write your blog post</h1>
+		<div class="blogform">
+			<input type="text" name="title" placeholder="Enter Title"
+				required="required"><br>
+			<textarea name="content" rows="15" cols="28"
+				placeholder="Write blog here" required="required"></textarea>
+			<br>
+			<div sec:authorize="!hasAuthority('ADMIN')">
+				<span>Author : [[${#request.userPrincipal.principal.name}]] </span>
+				<input type="hidden" name="author"
+					th:value="${#request.userPrincipal.principal.name}"> <input
+					type="hidden" name="uid"
+					th:value="${#request.userPrincipal.principal.id}">
+			</div>
+			<div sec:authorize="hasAuthority('ADMIN')">
+				<input type="text" name="author" placeholder="Author Name">
+				<input type="hidden" name="uid"
+					th:value="${#request.userPrincipal.principal.id}">
+			</div>
+		</div>
+		<div class="tagsform">
+			<input type="text" list="tags" name="tagsname" multiple="multiple"
+				placeholder="example : #tag1, #tag2">
+			<datalist id="tags">
+				<option th:each="tag : ${listOfTags}" th:text="${tag}">
+			</datalist>
+		</div>
+		<div class="radiobtn">
+			<input type="radio" id="save" name="postType" value="save"
+				required="required"> <label for="save">Save</label> <input
+				type="radio" id="publish" name="postType" value="publish"> <label
+				for="publish">Publish</label><br>
+			<button type="submit">submit</button>
+		</div>
+	</form>
+</body>
+
+</html>
+<style>
+html, body {
+	background: #FF4500;
+	font-family: 'Poppins', sans-serif;
+}
+
+h1 {
+	color: black;
+	margin-top: 4%;
+	text-align: center;
+}
+
+.blogform input {
+	border-radius: 15px;
+	width: 60%;
+	height: 3em;
+	margin: 2px;
+	font-size: 15px;
+	border: none;
+	border-radius: 6px;
+	font-family: 'Poppins', sans-serif;
+	text-align: center;
+}
+
+.blogform textarea {
+	border-radius: 15px;
+	width: 60%;
+	height: 18vw;
+	font-family: 'Poppins', sans-serif;
+	border: none;
+	border-radius: 6px;
+	text-align: center;
+}
+
+.tagsform input {
+	border-radius: 15px;
+	width: 60%;
+	margin-bottom: 10px;
+	height: 3em;
+	font-family: 'Poppins', sans-serif;
+	border: none;
+	border-radius: 6px;
+	text-align: center;
+}
+
+.radiobtn input {
+	width: 20px;
+	margin: 0;
+	cursor: pointer;
+}
+
+.radiobtn label {
+	font-size: 30px;
+	margin-right: 10px;
+}
+
+.radiobtn button {
+	border-radius: 15px;
+	font-size: 20px;
+	width: 60%;
+	background-color: #04aa6d;
+	padding: 0.5em;
+	margin: 10px;
+	border: none;
+	border-radius: 6px;
+	font-family: 'Poppins', sans-serif;
+	cursor: pointer;
+}
+
+.radiobtn button:hover {
+	background-color: orange;
+	transition: 1s;
+}
+
+span {
+	color: white;
+}
+</style>
